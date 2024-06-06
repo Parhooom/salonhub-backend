@@ -1,0 +1,88 @@
+version: "3.8"
+services:
+
+  nginx:
+    image: nginx:1.25.4
+    container_name: salonhub_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - web
+    restart: always
+
+
+  web:
+    container_name: salonhub_django
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - env/web.env
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # command: sh -c "python manage.py migrate &&
+          # python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    restart: always
+
+
+  db:
+    container_name: salonhub_postgres
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    env_file:
+      - env/db.env
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+
+  pgadmin:
+    container_name: salonhub_pgadmin
+    image: dpage/pgadmin4:7
+    env_file:
+      - env/pg.env
+    restart: always
+    ports:
+      - "9000:80"
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+
+
+  redis:
+    container_name: salonhub_redis
+    image: redis:7.2.4-bookworm
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+
+  mongo:
+    container_name: salonhub_mongo
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+
+volumes:
+  db_data:
+  pgadmin_data:
+  redis_data:
+  mongo_data:
