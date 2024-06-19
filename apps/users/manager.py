@@ -16,6 +16,7 @@ class UserManager(BaseUserManager):
     def create_user(self, phone_number, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault('is_owner', False)
         return self._create_user(phone_number, **extra_fields)
 
     def create_superuser(self, phone_number, password=None, **extra_fields):
@@ -23,4 +24,5 @@ class UserManager(BaseUserManager):
             raise ValueError('The Password field must be set for superusers')
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_owner', True)
         return self._create_user(phone_number, password, **extra_fields)

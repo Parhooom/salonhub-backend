@@ -5,7 +5,7 @@ from .models import CustomUser
 class SingUpUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['phone_number', 'first_name', 'last_name']
+        fields = ['phone_number', 'first_name', 'last_name', 'is_owner']
 
 
 class VerifyOTPSerializer(serializers.Serializer):

@@ -3,12 +3,10 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-# from rest_framework_simplejwt.tokens import RefreshToken
-# from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-
 
 from .serializers import SingUpUserSerializer, VerifyOTPSerializer, LoginSerializer
 from .models import CustomUser
+from .permissions import IsOwner
 
 from random import randint
 from django.core.cache import cache
@@ -71,14 +69,6 @@ def verify_otp(request):
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({"token": token.key})
 
-            # if str(otp) == entered_otp:
-            #     refresh = RefreshToken.for_user(user)
-            #
-            #     return Response({
-            #         "refresh": str(refresh),
-            #         "access": str(refresh.access_token)
-            #     })
-
             else:
                 return Response({"error": "Invalid OTP."})
 
@@ -88,38 +78,10 @@ def verify_otp(request):
         return Response(serializer.errors)
 
 
-# class CustomTokenObtainPairView(TokenObtainPairView):
-#     def post(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#
-#         if serializer.is_valid():
-#             user = serializer.validated_data['user']
-#             refresh = RefreshToken.for_user(user)
-#             return Response({
-#                 'refresh': str(refresh),
-#                 'access': str(refresh.access_token),
-#             })
-#
-#         return Response(serializer.errors, status=400)
-#
-#
-# class CustomTokenRefreshView(TokenRefreshView):
-#     def post(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#
-#         if serializer.is_valid():
-#             refresh = RefreshToken(serializer.validated_data['refresh'])
-#             data = {
-#                 'access': str(refresh.access_token),
-#             }
-#             return Response(data)
-#
-#         return Response(serializer.errors, status=400)
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
 def logout(request):
     request.user.auth_token.delete()
     return Response("logged out", status=200)
+
