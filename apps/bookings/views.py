@@ -59,11 +59,10 @@ def get_available_times(request, salon_id):
         return Response({'error': 'Salon does not exist.'}, status=status.HTTP_404_NOT_FOUND)
     
     available_times = {}
-
-    days = DayOfWeek.objects.all()
+    working_days = salon.working_days.all()
     time_slots = TimeSlot.objects.all()
 
-    for day in days:
+    for day in working_days:
         booked_time_slots = Booking.objects.filter(salon=salon, day=day).values_list('time_slot_id', flat=True)
         available_time_slots = time_slots.exclude(id__in=booked_time_slots)
         available_times[day.get_day_display()] = TimeSlotSerializer(available_time_slots, many=True).data
