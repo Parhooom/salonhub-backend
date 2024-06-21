@@ -40,3 +40,37 @@ class TimeSlotSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeSlot
         fields = ['id', 'time_range']
+
+
+
+
+class SalonUSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Salon
+        fields = ['name']
+
+
+class DayOfWeekUSerializer(serializers.ModelSerializer):
+    day_name = serializers.CharField(source='get_day_display')
+
+    class Meta:
+        model = DayOfWeek
+        fields = ['day', 'day_name']
+
+
+class TimeSlotUSerializer(serializers.ModelSerializer):
+    time_range = serializers.CharField(source='get_time_range_display')
+
+    class Meta:
+        model = TimeSlot
+        fields = ['time_range']
+
+
+class BookingUSerializer(serializers.ModelSerializer):
+    salon = SalonUSerializer(read_only=True)
+    day = DayOfWeekUSerializer(read_only=True)
+    time_slot = TimeSlotUSerializer(read_only=True)
+
+    class Meta:
+        model = Booking
+        fields = ['id', 'user', 'salon', 'day', 'time_slot']

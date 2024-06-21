@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import CreateBookingSerializer, BookingSerializer, TimeSlotSerializer
+from .serializers import CreateBookingSerializer, BookingSerializer, TimeSlotSerializer, BookingUSerializer
 
 from .models import Booking, TimeSlot
 from apps.salons.models import Salon, DayOfWeek
@@ -34,7 +34,7 @@ def create_booking(request):
 @permission_classes([IsAuthenticated])
 def get_all_user_bookings(request):
     bookings = Booking.objects.filter(user=request.user)
-    serializer = BookingSerializer(bookings, many=True)
+    serializer = BookingUSerializer(bookings, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

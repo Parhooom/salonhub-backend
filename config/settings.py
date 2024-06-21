@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # 'rest_framework_simplejwt',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_spectacular',
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -148,7 +149,16 @@ CORS_ALLOW_ALL_ORIGINS = True
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Salonhub API',
+    'DESCRIPTION': 'Salonhub is your favorite place to reserve salons',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 
